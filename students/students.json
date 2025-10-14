@@ -1,0 +1,22 @@
+{
+  "students": [
+    {
+      "name": "John",
+      "marks": [85, 90, 78],
+      "average": 84.33333333333333,
+      "status": "Pass"
+    },
+    {
+      "name": "Jane",
+      "marks": [92, 88, 95],
+      "average": 91.66666666666667,
+      "status": "Pass"
+    },
+    {
+      "name": "Sam",
+      "marks": [75, 80, 72],
+      "average": 75.66666666666667,
+      "status": "Pass"
+    }
+  ]
+}
