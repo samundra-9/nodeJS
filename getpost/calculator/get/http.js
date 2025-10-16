@@ -3,7 +3,9 @@ const fs = require("fs");
 const url = require("url");
 
 const server = http.createServer((req, res) => {
-  if (req.method === "GET" && req.url === "/calculator") {
+  const parsedUrl = url.parse(req.url, true);
+  const pathname = parsedUrl.pathname;
+  if (req.method === "GET" && pathname === "/calculator") {
     // fs.readFile("./index.html", "utf-8", (err, data) => {
     //   if (err) { 
     //     res.writeHead(500, { "Content-Type": "text/plain" });
@@ -14,12 +16,13 @@ const server = http.createServer((req, res) => {
     //   res.end(data);
     // });
     fs.createReadStream("./index.html").pipe(res);
-  } else if (req.method == "GET" && req.url.startsWith("/calculate")) {
-    const parsedUrl = url.parse(req.url, true);
+  } else if (req.method == "GET" && pathname== "/calculate") {
+    
     // const query = parsedUrl.query;
     // const num1 = parseFloat(query.num1);
     // const num2 = parseFloat(query.num2);
     // const operation = query.operation;
+    console.log(req.url);
     
     const {num1, num2, operation} = parsedUrl.query;
 
