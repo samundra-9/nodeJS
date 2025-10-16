@@ -28,7 +28,7 @@ const server = http.createServer((req,res)=>{
             body += chunk.toString();
         })
         req.on('end',()=>{
-            const {length, width} = querystring(body);
+            const {length, width} = querystring.parse(body);
             let area = rectangle(length,width);
             res.end(JSON.stringify({"area of rectangle is: ":area}));
         })
