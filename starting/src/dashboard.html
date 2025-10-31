@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+</head>
+<body>
+    <nav>
+        <ul>
+            <li><a href="/dashboard">Dashboard</a></li>
+            <li><a href="/addproduct">Add Product</a></li>
+        </ul>
+    </nav>
+    <h1>Welcome user</h1>
+    <a href="/addproduct">Add Product</a>
+</body>
+<script>
+    // Fetch product data and display it
+    fetch('/allproducts')
+        .then(response => response.json())
+        .then(data => {
+            const productList = document.createElement('ul');
+            data.forEach(product => {
+                const listItem = document.createElement('li');
+                listItem.textContent = `${product.name} - $${product.price} (Quantity: ${product.quantity})`;
+                productList.appendChild(listItem);
+            });
+            document.body.appendChild(productList);
+        })
+        .catch(error => console.error('Error fetching product data:', error));
+</script>
+</html>
