@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+</head>
+<body>
+    <h1>Welcome to the Dashboard</h1>
+    <section id="productList">
+        <!-- products will be displayed here -->
+    </section>
+    
+</body>
+<script>
+    fetch('/products')
+    .then(response => response.json())
+    .then(products => {
+        const productList = document.getElementById('productList');
+        
+        products.forEach(product => {
+            const productDiv = document.createElement('div');
+            const h3 = document.createElement('h3');
+            h3.textContent = product.pname;
+            const p = document.createElement('p');
+            p.textContent = `Price: $${product.pprice}`;
+            productDiv.append(h3,p);
+            if(!Array.isArray(product.files)){
+                product.files = [product.files];
+            }
+
+            product.files.forEach(file => {
+                const img = document.createElement('img');
+                img.src = `${file}`;
+                img.alt = product.pname;
+                img.width = 200;
+                productDiv.appendChild(img);
+            });
+            productList.appendChild(productDiv);
+        });
+    })
+    .catch(error => console.error('Error fetching products:', error));
+</script>
+</html>

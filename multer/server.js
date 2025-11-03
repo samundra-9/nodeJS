@@ -16,9 +16,9 @@ app.post("/uploads", upload.single('file'), (req, res) => {
     const pname = req.body.pname;
     const pprice = req.body.pprice;
     const Image = req.file.path;
-    const file = req.file.filename;
+    const files = req.file.filename;
 
-    const product = { pname, pprice, Image, file };
+    const product = { pname, pprice, Image, files };
     fs.readFile(__dirname + '/product.json', 'utf-8', (err, data) => {
         let products = [];
         if (!err && data) {
@@ -29,7 +29,7 @@ app.post("/uploads", upload.single('file'), (req, res) => {
             if (err) {
                 return res.status(500).send('Error saving product.');
             }
-            res.send('Product uploaded successfully.');
+        res.sendFile(__dirname + "/dashboard.html");
         });
     });
 });
@@ -42,9 +42,7 @@ app.post("/multiples", upload.array("files", 5), (req, res) => {
     return res.status(400).send("No files uploaded.");
   }
 
-  const Image = req.files.map((file) => ({
-    file: file.path,
-  }));
+  const files = req.files.map((file) => (file.filename));
 
   fs.readFile("product.json", "utf-8", (err, data) => {
     let existingProducts = [];
@@ -56,7 +54,7 @@ app.post("/multiples", upload.array("files", 5), (req, res) => {
       }
     }
 
-    existingProducts.push({ pname, pprice, Image });
+    existingProducts.push({ pname, pprice, files });
 
     fs.writeFile("product.json",
       JSON.stringify(existingProducts),
@@ -65,12 +63,21 @@ app.post("/multiples", upload.array("files", 5), (req, res) => {
           console.error("Error saving products:", err);
           return res.status(500).send("Error saving products.");
         }
-        res.send("Products uploaded successfully.");
+        res.sendFile(__dirname + "/dashboard.html");
       }
     );
   });
 });
 
+app.get("/products",(req,res)=>{
+  fs.readFile(__dirname + '/product.json', 'utf-8',(err,data)=>{
+    if(err){
+      console.error("Error reading products:", err);
+      return res.status(500).send("Error reading products.");
+    }
+    res.send(JSON.parse(data));
+  })
+})
 
 app.listen(3000,()=>{
     console.log("Server is running on port 3000");
