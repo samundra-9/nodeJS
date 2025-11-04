@@ -20,7 +20,9 @@ const filter = (req, file, cb) => {
   else cb(new Error('Only jpeg, png, jpg files are allowed'), false);
 }
 
-const upload = multer({storage: Storage, fileFilter: filter});
+
+
+const upload = multer({storage: Storage, fileFilter: filter, limits: {fileSize: 1024 * 1024 * 5}});
 
 
 app.use(express.urlencoded({ extended: true }));
