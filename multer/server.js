@@ -2,7 +2,25 @@ const express = require('express');
 const app = express();
 const fs = require('fs');
 const multer = require('multer');
-const upload = multer({ dest: __dirname + '/uploads/' });
+//const upload = multer({ dest: __dirname + '/uploads/' });
+const Storage = multer.diskStorage({
+  destination : (req,file,cb)=>{
+    cb(null,__dirname + '/uploads/');
+  },
+  filename: (req, file, cb) => {
+    cb(null, Date.now() + ".jpeg");
+  }
+});
+
+const filter = (req, file, cb) => {
+  const type = file.mimetype;
+  console.log(type);
+  const ext = type.split('/')[1];
+  if(ext === 'jpeg' || ext === 'png' || ext === 'jpg') cb(null, true);
+  else cb(new Error('Only jpeg, png, jpg files are allowed'), false);
+}
+
+const upload = multer({storage: Storage, fileFilter: filter});
 
 
 app.use(express.urlencoded({ extended: true }));
