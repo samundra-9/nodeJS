@@ -2,8 +2,28 @@ const express = require('express');
 const app = express();
 const fs = require('fs');
 const path = require('path');
+const multer = require('multer');
+
+const Storage = multer.diskStorage({
+    destination: (req,file,cb)=>{
+        cb(null,__dirname + "/src/uploads/");
+    },
+    filename : (req,file,cb)=>{
+        cb(null,Date.now()+".jpeg");
+    }
+});
+const filter = (req,file,cb)=>{
+    const type = file.mimetype.split('/')[1];
+    console.log(type);
+    if(type === 'jpeg' || type === 'png' || type === 'jpg') cb(null,true);
+    else cb(new Error('Only jpeg, png, jpg files are allowed'),false);
+}
+
+const upload = multer({ storage: Storage, fileFilter: filter , limits: { fileSize: 1024 * 1024 *2 } });
+
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'src')));
+
 app.get("/",(req,res)=>{
     res.sendFile(__dirname + "/src/home.html");
 })
@@ -61,7 +81,7 @@ app.get("/dashboard",(req,res)=>{
 app.get("/addproduct",(req,res)=>{
     res.sendFile(__dirname + "/src/addproduct.html");
 })
-app.post("/addnew",(req,res)=>{
+app.post("/addnew",upload.single('image'),(req,res)=>{
     fs.readFile(__dirname + "/src/productData.json","utf-8",(err,data)=>{
         if(err){
             console.log("Error in reading file" + err);
@@ -69,7 +89,7 @@ app.post("/addnew",(req,res)=>{
         }
         const products = JSON.parse(data);
         const { name, price, quantity, description } = req.body;
-        products.push({ name, price, quantity, description });
+        products.push({ name, price, quantity, description, image:req.file.filename });
         fs.writeFile(__dirname + "/src/productData.json", JSON.stringify(products), (err) => {
             if (err) {
                 console.log("Error in writing file" + err);
