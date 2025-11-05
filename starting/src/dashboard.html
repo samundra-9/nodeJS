@@ -36,6 +36,11 @@
                     data.forEach(product => {
                         const listItem = document.createElement('li');
                         listItem.textContent = `${product.name} - $${product.price} (Quantity: ${product.quantity})`;
+                        const img = document.createElement('img');
+                        img.src = `./uploads/${product.image}`;
+                        img.alt = product.name;
+                        img.style.width = '200px';
+                        listItem.appendChild(img);
                         productList.appendChild(listItem);
                     });
                     document.getElementById('product-list').appendChild(productList);
