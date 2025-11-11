@@ -14,7 +14,8 @@ mongoose.connect('mongodb://localhost:27017/sessionDB')
 const userSchema = new mongoose.Schema({
     username : String,
     email : String,
-    password : String
+    password : String,
+    role : { type: String, default: 'user' }
 });
 const User = mongoose.model('User',userSchema);
 
@@ -28,7 +29,7 @@ app.use(session({
 }));
 
 function isAuthenticated(req, res, next) {
-    if (req.session && req.session.username) {
+    if (req.session && req.session.email) {
         return next();  
     } else {
         res.redirect('/login'); 
@@ -40,7 +41,7 @@ app.get('/',(req,res)=>{
 });
 
 app.get('/dashboard', isAuthenticated,(req,res)=>{
-    res.send(`Welcome to your dashboard, ${req.session.username}`);
+    res.send(`Welcome to your dashboard, ${req.session.role}`);
 });
 
 app.get('/login',(req,res)=>{
@@ -48,18 +49,25 @@ app.get('/login',(req,res)=>{
 }
 );
 
-app.post('/login',(req,res)=>{
+app.post('/login', async (req,res)=>{
     const { username,email, password } = req.body;
-    const user = User.findOne({username: username,email: email, password: password })
-    user.then((foundUser)=>{
-        if(foundUser){
-            req.session.username = foundUser.username;
-            res.redirect('/dashboard');
-        } else {
+    const user = await User.findOne({username: username,email: email, password: password });
+    // console.log(user);
+    if(user){
+        req.session.email = user.email;
+        req.session.role = user.role ;
+        res.redirect('/dashboard');
+    } else {
             res.send("<h1>Invalid credentials. Please try again. or <a href='/signup'>sign up</a></h1>");
-        }
-    });
+    }
 });
+app.get('/admin',isAuthenticated,async (req,res)=>{
+    if(req.session.role === 'admin'){
+        res.send("Welcome to the admin panel");
+    } else {
+        res.status(403).send("Access denied");
+    }
+})
 app.get('/signup',(req,res)=>{
     res.sendFile(__dirname + '/signup.html');
 });
