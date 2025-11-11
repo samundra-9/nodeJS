@@ -1,7 +1,25 @@
 const express = require('express');
 const app = express();
+app.use('/uploads', express.static('uploads'));
 const mongoose = require('mongoose');
 const session = require('express-session');
+const multer = require('multer');
+const Storage = multer.diskStorage({
+    destination : (req,file,cb)=>{
+        cb(null, __dirname + '/uploads/');
+    },
+    filename : (req,file,cb)=>{
+        cb(null, Date.now() + ".jpeg");
+    }
+});
+const filter = (req,file,cb)=>{
+    const type = file.mimetype;
+    console.log(type);
+    const ext = type.split('/')[1];
+    if(ext === 'jpeg' || ext === 'png' || ext === 'jpg') cb(null, true);
+    else cb(new Error('Only jpeg, png, jpg files are allowed'), false);
+}
+const upload = multer({storage: Storage, fileFilter: filter, limits: {fileSize: 1024 * 1024 * 1}});
 
 mongoose.connect('mongodb://localhost:27017/sessionDB')
 .then(()=>{
@@ -17,7 +35,14 @@ const userSchema = new mongoose.Schema({
     password : String,
     role : { type: String, default: 'user' }
 });
+const productSchema = new mongoose.Schema({
+    name: String,
+    price: Number,
+    quantity: Number,
+    imagePath: String
+})
 const User = mongoose.model('User',userSchema);
+const Product = mongoose.model('Product',productSchema);
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
@@ -41,9 +66,12 @@ app.get('/',(req,res)=>{
 });
 
 app.get('/dashboard', isAuthenticated,(req,res)=>{
-    res.send(`Welcome to your dashboard, ${req.session.role}`);
+    res.sendFile(__dirname + '/dashboard.html');
 });
-
+app.get('/products',isAuthenticated,async(req,res)=>{
+    const products =  await Product.find({});
+    res.json(products);
+})
 app.get('/login',(req,res)=>{
     res.sendFile(__dirname + '/login.html');
 }
@@ -63,11 +91,34 @@ app.post('/login', async (req,res)=>{
 });
 app.get('/admin',isAuthenticated,async (req,res)=>{
     if(req.session.role === 'admin'){
-        res.send("Welcome to the admin panel");
+        res.sendFile(__dirname + '/admin.html');
     } else {
         res.status(403).send("Access denied");
     }
 })
+
+app.post('/addNewProduct', isAuthenticated, upload.single('productImage'), async (req, res) => {
+    if (req.session.role !== 'admin') {
+        return res.status(403).send("Access denied");
+    }
+        // Handle adding new product logic here
+        const { productName, productPrice, productQuantity } = req.body;
+        const productImage = req.file; 
+        console.log(productImage);
+
+        const newProduct = await Product.create({
+            name: productName,
+            price: productPrice,
+            quantity: productQuantity,
+            imagePath: productImage.filename
+        });
+
+        if (!newProduct) {
+            return res.status(500).send("Error adding new product.");
+        }
+        res.send("New product added successfully.");
+});
+
 app.get('/signup',(req,res)=>{
     res.sendFile(__dirname + '/signup.html');
 });

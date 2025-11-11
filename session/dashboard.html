@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+</head>
+<body>
+    <h1>hello Authenticated users;; welcome to dashboard</h1>
+    <div id="products"></div>
+</body>
+<script>
+    async function fetchProducts() {
+        try {
+            const response = await fetch('/products');
+            const products = await response.json();
+            const productsDiv = document.getElementById('products');
+            productsDiv.innerHTML = '<h2>Product List</h2>';
+            products.forEach(product => {
+                const productElement = document.createElement('div');
+                productElement.innerHTML = `
+                    <h3>${product.name}</h3>
+                    <p>Price: $${product.price}</p>
+                    <p>Quantity: ${product.quantity}</p>
+                    <img src="./uploads/${product.imagePath}" alt="${product.name}" width="100">
+                `;
+                productsDiv.appendChild(productElement);
+            });
+        } catch (error) {
+            console.error('Error fetching products:', error);
+        }
+    }
+
+    fetchProducts();
+</script>
+</html>
