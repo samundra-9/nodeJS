@@ -4,6 +4,7 @@ app.use('/uploads', express.static('uploads'));
 const mongoose = require('mongoose');
 const session = require('express-session');
 const multer = require('multer');
+const ejs = require('ejs');
 const Storage = multer.diskStorage({
     destination : (req,file,cb)=>{
         cb(null, __dirname + '/uploads/');
@@ -45,7 +46,9 @@ const User = mongoose.model('User',userSchema);
 const Product = mongoose.model('Product',productSchema);
 
 app.use(express.urlencoded({ extended: true }));
-app.use(express.json());
+app.use(express.json()); 
+app.set('view engine', 'ejs');
+app.set('views', __dirname + '/views');
 
 app.use(session({
     saveUninitialized : true,
@@ -57,23 +60,27 @@ function isAuthenticated(req, res, next) {
     if (req.session && req.session.email) {
         return next();  
     } else {
-        res.redirect('/login'); 
+        
+        const errMsg = encodeURIComponent('You must be logged in to access this page.');
+        req.session.redirectTo = req.originalUrl;
+        res.redirect(`/login?error=${errMsg}`); 
     }
 }
 
 app.get('/',(req,res)=>{
-    res.sendFile(__dirname + '/home.html');
+    res.render('home');
 });
 
 app.get('/dashboard', isAuthenticated,(req,res)=>{
-    res.sendFile(__dirname + '/dashboard.html');
+    res.render('dashboard');
 });
 app.get('/products',isAuthenticated,async(req,res)=>{
     const products =  await Product.find({});
     res.json(products);
 })
 app.get('/login',(req,res)=>{
-    res.sendFile(__dirname + '/login.html');
+    const message = req.query.error || null;
+    res.render('login',{message} );
 }
 );
 
@@ -84,14 +91,16 @@ app.post('/login', async (req,res)=>{
     if(user){
         req.session.email = user.email;
         req.session.role = user.role ;
-        res.redirect('/dashboard');
+        const redirectTo = req.session.redirectTo || '/dashboard';
+        delete req.session.redirectTo;
+        res.redirect(redirectTo);
     } else {
-            res.send("<h1>Invalid credentials. Please try again. or <a href='/signup'>sign up</a></h1>");
+            res.render('login', { message: "Invalid credentials. Please try again or sign up." });
     }
 });
-app.get('/admin',isAuthenticated,async (req,res)=>{
+app.get('/admin',isAuthenticated, (req,res)=>{
     if(req.session.role === 'admin'){
-        res.sendFile(__dirname + '/admin.html');
+        res.render('admin');
     } else {
         res.status(403).send("Access denied");
     }
@@ -104,7 +113,7 @@ app.post('/addNewProduct', isAuthenticated, upload.single('productImage'), async
         // Handle adding new product logic here
         const { productName, productPrice, productQuantity } = req.body;
         const productImage = req.file; 
-        console.log(productImage);
+        // console.log(productImage);
 
         const newProduct = await Product.create({
             name: productName,
@@ -120,7 +129,7 @@ app.post('/addNewProduct', isAuthenticated, upload.single('productImage'), async
 });
 
 app.get('/signup',(req,res)=>{
-    res.sendFile(__dirname + '/signup.html');
+    res.render('signup');
 });
 app.post('/signup',async (req,res)=>{
     const { username, email, password } = req.body;
