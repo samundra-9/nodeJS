@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>uSERS</title>
+</head>
+<body>
+    <ul>
+        <% users.forEach(user => { %>
+            <li>Name:<%= user.name  %></li>
+            <li>Price:<%= user.email  %></li>
+            <li>Total:<%=user.marks.join('+')  %> = <%= user.marks.reduce((curr,acc)=>curr+acc,0) %> </li>
+            
+        <% }); %>~
+    </ul>
+</body>
+</html>

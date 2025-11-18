@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home</title>
+</head>
+<body>
+    <%- include('header') %>
+    <ul>
+        <% products.forEach(product => { %>
+            <li>Name:<%= product.name  %></li>
+            <li>Price:<%= product.price  %></li>
+            <li>Description:<%=product.desc  %></li>
+            
+        <% }); %>
+    </ul>
+    <table>
+        <tr>
+            <th>Name</th>
+            <th>Price</th>
+            <th>Description</th>
+            <th>EDITS</th>
+        </tr>
+        <% products.forEach(product=>{ %>
+            <tr>            
+                <td><%= product.name  %></td>
+                <td><%= product.price  %></td>
+                <td><%=product.desc  %></td>
+                <td>
+                    <a href="/view/<%=product.id%>">View</a> | 
+                    <a href="/delete/<%=product.id%>">Delete</a> |
+                    <a href="/update/<%=product.id%>">Update</a>
+                </td>
+            </tr>
+        <% }) %>
+    </table>
+    <a href="/add">Add new Product</a>
+
+    <%- include('footer') %>
+</body>
+</html>
