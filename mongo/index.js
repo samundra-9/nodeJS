@@ -29,4 +29,26 @@ app.get("/insertmany",(req,res)=>{
     })
     res.json({ok:true});
 });
+app.get('/read',(req,res)=>{
+    // dbinstance.collection('User').findOne({})
+    // .then(data=>{
+    //     console.log("Data: ",data);
+    // })
+    // .catch(err=>{
+    //     console.log("Error reading data: ",err);
+            // res.send("Failed reading data");
+    // })
+    // res.send({ok:true})
+    dbinstance.collection('User').find({})
+    .toArray()
+    .then(data=>{
+        console.log("Data: ",data);
+    })
+    .catch(err=>{
+        console.log("Error reading data: ",err);
+        res.send("Failed reading data");
+    })
+    res.send({ok:true})
+});
+
 app.listen(3000);
