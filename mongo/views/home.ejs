@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home</title>
+    <style>
+        table{
+            border: 1px solid burlywood;
+            padding: 1px;
+        }
+    </style>
+</head>
+<body>
+    <h1>welcome...</h1>
+    <table>
+        <tr>
+            <th>Name</th>
+            <th>Roll</th>
+            <th>Section</th>
+            <th>EDITS</th>
+        </tr>
+        <% users.forEach(user=>{ %>
+            <tr>            
+                <td><%= user.name  %></td>
+                <td><%= user.roll  %></td>
+                <td><%=user.sec  %></td>
+                <td>
+                    <a href="/delete/<%=user._id%>">Delete</a> |
+                    <a href="/update/<%=user._id%>">Update</a>
+                </td>
+            </tr>
+        <% }) %>
+    </table>
+
+    <a href="/insertOne">Add single User</a> |
+    <a href="/insertmany">Add multiple users</a>
+
+</body>
+</html>
