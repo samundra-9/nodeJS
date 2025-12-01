@@ -7,30 +7,44 @@
 </head>
 <body>
     <%- include('header') %>
+    <!-- <% if(products.length === 0){ %>
+        <p>Products not found</p>
+        <% }else{ %>
+            <p>Thre are prodects <%= products[0].quantity %></p>
+             <p>Thre are prodects <%= products[0]._id %></p>
+            <% } %> -->
+    
     <ul>
         <% products.forEach(product => { %>
             <li>Name:<%= product.name  %></li>
             <li>Price:<%= product.price  %></li>
-            <li>Description:<%=product.desc  %></li>
+            <li>Description:<%=product.quantity  %></li>
             
         <% }); %>
     </ul>
     <table>
         <tr>
             <th>Name</th>
+            <th>Image</th>
             <th>Price</th>
             <th>Description</th>
             <th>EDITS</th>
+            <th>Cart</th>
         </tr>
         <% products.forEach(product=>{ %>
             <tr>            
                 <td><%= product.name  %></td>
+                <td><img src="<%=product.imagePath  %>" alt="<%= product.name  %>" style="width: 100px; height: auto;"></td>
                 <td><%= product.price  %></td>
-                <td><%=product.desc  %></td>
+                <td><%=product.quantity  %></td>
                 <td>
-                    <a href="/view/<%=product.id%>">View</a> | 
-                    <a href="/delete/<%=product.id%>">Delete</a> |
-                    <a href="/update/<%=product.id%>">Update</a>
+                    <a href="/view/<%=product._id%>">View</a> | 
+                    <a href="/delete/<%=product._id%>">Delete</a> |
+                    <a href="/update/<%=product._id%>">Update</a>
+                </td>
+                <td>
+                    <a href="/cart/<%=product._id%>/add"> + </a> |
+                    <a href="/cart/<%=product._id%>/sub"> - </a>
                 </td>
             </tr>
         <% }) %>

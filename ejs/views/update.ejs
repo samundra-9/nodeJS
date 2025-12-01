@@ -6,10 +6,11 @@
     <title>Update <%= product.name  %></title>
 </head>
 <body>
-    <form action="/update/<%= product.id %>" method="POST">
+    <form action="/update/<%= product._id %>" method="POST" enctype="multipart/form-data">
         <input type="text" name="name" value="<%= product.name%>">  <br> <br>
         <input type="text" name="price" value="<%= product.price %>">  <br> <br>
-        <input type="text" name="desc" value="<%= product.desc  %>">  <br> <br>
+        <input type="text" name="quantity" value="<%= product.quantity  %>">  <br> <br>
+        <input type="file" name="file" > <br><br>
         <input type="submit">
     </form>
     
