@@ -1,0 +1,13 @@
+<nav style="background:#333; padding:10px;">
+  <a href="/" style="color:white; margin-right:20px; text-decoration:none;">LOGO</a>
+
+  <a href="/about" style="color:white; margin-right:15px; text-decoration:none;">About</a>
+  <a href="/contact" style="color:white; margin-right:15px; text-decoration:none;">Contact</a>
+
+  <% if (user && user.role === 'admin') { %>
+    <a href="/addproduct" style="color:white; margin-right:15px; text-decoration:none;">Add Product</a>
+    <a href="/users" style="color:white; margin-right:15px; text-decoration:none;">Visit Users</a>
+  <% } %>
+
+  <a href="/logout" style="color:white; text-decoration:none;">Logout</a>
+</nav>

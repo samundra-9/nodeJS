@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <%- include('navbar') %>
+    
+<table>
+    <tr>
+        <th>Name</th>
+        <th>email</th>
+        <th>role</th>
+        <th>cart</th>
+    </tr>
+   <%  users.forEach(user => { %>
+        <tr>
+            <td><%= user.name %></td>
+            <td><%= user.email %></td>
+            <td><%= user.role %></td>
+            <td><%= user.selectedProduct.join(',') %></td>
+        </tr>
+    
+<% }); %>
+</table>
+</body>
+</html>
