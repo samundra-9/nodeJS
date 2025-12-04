@@ -33,9 +33,9 @@ function authorize(req,res,next){
 
 app.get('/',(req,res)=>{
     if(req.session.user) res.redirect('/dashboard');
-    else res.render('login');
+    else res.render('login',{msg:""});
 });
-app.get('/login',(req,res)=>res.render('login'));
+app.get('/login',(req,res)=>res.render('login',{msg:""}));
 app.get('/signup',(req,res)=>res.render('signup'));
 
 app.post('/login',(req,res)=>{
@@ -43,6 +43,9 @@ app.post('/login',(req,res)=>{
     dbinstance.collection('user').findOne({email,password})
     .then(user => {
         if(user){
+            if(user.block){
+                return res.status(403).render('login', {msg: "Your account is blocked. Please contact admin."});
+            }
             console.log(user);
             req.session.user = user;
             res.redirect('/dashboard');
@@ -88,11 +91,36 @@ app.get('/users',authenciate,authorize,(req,res)=>{
     .then(data=> res.render('users',{user:req.session.user,users:data}))
     .catch(()=>res.send("Error geting users.. try again"));
 })
+app.get('/addproduct',authenciate,authorize,(req,res)=>{
+    res.render('addproduct',{user:req.session.user});
+})
 
 app.get('/logout',(req,res)=>{
     req.session.destroy(err=>{
         if(err) return res.status(500).send("Error logging out");
         res.redirect('/login');
+    });
+});
+
+app.get('/blockUnblock/:id',authenciate,authorize,(req,res)=>{
+    const userId = new mongodb.ObjectId(req.params.id);
+    dbinstance.collection('user').findOne({_id:userId})
+    .then(user=>{
+        if(user){
+            const updatedStatus = !user.block;
+            return dbinstance.collection('user').updateOne(
+                {_id:userId},
+                {$set:{block:updatedStatus}}
+            );
+        } else {
+            res.send("User not found");
+        }
+    })
+    .then(() => {
+        res.redirect('/users');
+    })
+    .catch(err => {
+        res.status(500).send("Error updating user status");
     });
 });
 
