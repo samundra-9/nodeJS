@@ -68,7 +68,8 @@ app.post('/signup',(req,res)=>{
         } else {
             const role = 'user';
             const selectedProduct = [];
-            return dbinstance.collection('user').insertOne({name,email,password,role,selectedProduct});
+            const block = false;
+            return dbinstance.collection('user').insertOne({name,email,password,role,selectedProduct,block});
         }
     })
     .then(result => {
