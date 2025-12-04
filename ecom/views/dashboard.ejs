@@ -7,6 +7,21 @@
 </head>
 <body>
     <%- include('navbar') %>
+    <h1>Welcome, <%= user.name %>!</h1>
+    <div>
+        <h2>Product List</h2>
+        <ul>
+            <% products.forEach(product => { %>
+                <li>
+                    <h3><%= product.name %></h3>
+                    <p>Price: $<%= product.price %></p>
+                    <p>Description: <%= product.description %></p>
+                    <p>Quantity: <%= product.quantity %></p>
+                    <img src="../uploads/<%=product.image %>" alt="<%= product.name %>" width="100">
+                </li>
+            <% }); %>
+        </ul>
+    </div>
     <%- include('footer') %>
 </body>
 </html>
