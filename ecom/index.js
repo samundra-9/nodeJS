@@ -1,8 +1,22 @@
 const express = require('express');
 const mongodb = require('mongodb');
 const session = require('express-session');
-const app = express();
+const multer = require('multer');
+const storage = multer.diskStorage({
+    destination : (req,file,cb)=>cb(null,'./uploads'),
+    filename : (req,file,cb)=> cb(null,Date.now() + '.' + file.mimetype.split('/')[1])    
+});
+const fileFilter = (req, file, cb) => {
+    const type = file.mimetype;
+    // console.log(type);
+    const ext = type.split('/')[1];
+    if(ext === 'jpeg' || ext === 'png' || ext === 'jpg') cb(null, true);
+    else cb(new Error('Only jpeg, png, jpg files are allowed'), false);
+};
+const upload = multer({storage, fileFilter, limits:{fileSize:1024*1024}});
 
+const app = express();
+app.use('/uploads',express.static('uploads'));
 const client = mongodb.MongoClient;
 let dbinstance;
 
@@ -83,7 +97,14 @@ app.post('/signup',(req,res)=>{
 });
 
 app.get('/dashboard',authenciate,(req,res)=>{
-    res.render('dashboard',{user:req.session.user});
+    dbinstance.collection('products').find({})
+    .toArray()
+    .then(products => {
+        res.render('dashboard',{user:req.session.user, products});
+    })
+    .catch(() => {
+        res.status(500).send("Error fetching products");
+    });
 });
 
 app.get('/users',authenciate,authorize,(req,res)=>{
@@ -124,6 +145,22 @@ app.get('/blockUnblock/:id',authenciate,authorize,(req,res)=>{
         res.status(500).send("Error updating user status");
     });
 });
+
+app.get('/addproduct',authenciate,authorize,(req,res)=>{
+    res.render('addproduct',{user:req.session.user});
+})
+app.post('/addproduct',authenciate,authorize,upload.single('image'),(req,res)=>{
+    const {name, price, description, quantity} = req.body;
+    const image = req.file.filename;
+    dbinstance.collection('products').insertOne({name, price, description, quantity, image})
+    .then(()=>{
+        res.send("Product added successfully");
+    })
+    .catch(()=>{
+        res.status(500).send("Error adding product.. try again");
+    });
+
+})
 
 app.listen(3000,()=>console.log("Server running on port 3000"));
 
