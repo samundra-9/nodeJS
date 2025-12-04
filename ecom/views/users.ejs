@@ -24,8 +24,10 @@
             <td><%= user.selectedProduct.join(',') %></td>
             <td><a href="/blockUnblock/<%= user._id %>"><%= user.block ? "unblock" : "block" %></a> </td>
         </tr>
-    
 <% }); %>
+<p>
+    <a href="/signup">Add new user</a>
+</p>
 </table>
 </body>
 </html>
