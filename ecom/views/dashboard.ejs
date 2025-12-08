@@ -1,27 +1,143 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Dashboard</title>
-</head>
-<body>
+    <style>
+      /* Container */
+      .product-list-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 24px;
+        background: #fafafa;
+      }
+
+      /* Section Title */
+      .section-title {
+        text-align: center;
+        font-size: 1.8rem;
+        margin-bottom: 24px;
+        color: #264653;
+        font-weight: 600;
+      }
+
+      /* Grid Layout */
+      .product-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+        gap: 20px;
+        padding: 0;
+        list-style: none;
+      }
+
+      /* Product Card */
+      .product-card {
+        background: #fff;
+        border: 1px solid #eee;
+        border-radius: 10px;
+        padding: 16px;
+        text-align: center;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+      }
+
+      .product-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 6px 14px rgba(0, 0, 0, 0.12);
+      }
+
+      /* Image */
+      .product-img {
+        width: 120px;
+        height: auto;
+        margin-bottom: 12px;
+        border-radius: 6px;
+      }
+
+      /* Text */
+      .product-title {
+        font-size: 1.2rem;
+        margin: 8px 0;
+        color: #333;
+      }
+
+      .product-price {
+        font-weight: bold;
+        color: #2a9d8f;
+        margin: 6px 0;
+      }
+
+      .product-desc {
+        font-size: 0.9rem;
+        color: #555;
+        margin: 6px 0;
+      }
+
+      .product-qty {
+        font-size: 0.85rem;
+        color: #777;
+      }
+
+      /* Buttons */
+      .product-actions {
+        margin-top: 12px;
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+      }
+
+      .btn {
+        text-decoration: none;
+        padding: 8px 14px;
+        border-radius: 6px;
+        font-size: 0.9rem;
+        transition: background 0.2s ease;
+        background: #2a9d8f;
+        color: #fff;
+      }
+
+      .btn:hover {
+        background: #21867a;
+      }
+
+      .btn-secondary {
+        background: #264653;
+      }
+
+      .btn-secondary:hover {
+        background: #1b333f;
+      }
+    </style>
+  </head>
+  <body>
     <%- include('navbar') %>
     <h1>Welcome, <%= user.name %>!</h1>
-    <div>
-        <h2>Product List</h2>
-        <ul>
-            <% products.forEach(product => { %>
-                <li>
-                    <h3><%= product.name %></h3>
-                    <p>Price: $<%= product.price %></p>
-                    <p>Description: <%= product.description %></p>
-                    <p>Quantity: <%= product.quantity %></p>
-                    <img src="../uploads/<%=product.image %>" alt="<%= product.name %>" width="100">
-                </li>
-            <% }); %>
-        </ul>
+    <div class="product-list-container">
+      <h2 class="section-title">🛍 Product List</h2>
+      <ul class="product-grid">
+        <% products.forEach(product => { %>
+        <li class="product-card">
+          <img
+            src="../uploads/<%= product.image %>"
+            alt="<%= product.name %>"
+            class="product-img"
+          />
+          <h3 class="product-title"><%= product.name %></h3>
+          <p class="product-price">$<%= product.price %></p>
+          <p class="product-desc"><%= product.description %></p>
+          <p class="product-qty">Quantity: <%= product.quantity %></p>
+          <div class="product-actions">
+            <a href="/addtocart" class="btn">🛒 Cart</a>
+            <a href="/view/<%= product._id %>" class="btn btn-secondary"
+              >👁 View</a
+            >
+          </div>
+        </li>
+        <% }); %>
+      </ul>
     </div>
+
     <%- include('footer') %>
-</body>
+  </body>
 </html>
