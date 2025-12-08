@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cart</title>
+    <link rel="stylesheet" href="../style.css">
+</head>
+<body>
+    <%- include('navbar') %>
+    <main>
+        <section class="cart-container">
+            <h1 class="section-title">My Shopping Cart</h1>
+            <% if (products.length === 0) { %>
+                <p>Your cart is empty. <a href="/dashboard">Continue shopping</a></p>
+            <% } else { %>
+                <table class="cart-table">
+                    <thead>
+                        <tr>
+                            <th>Product</th>
+                            <th>Price</th>
+                            <th>Quantity</th>
+                            <th>Total</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% products.forEach(item => { %>
+                            <%=console.log(item)%>
+                            <tr>
+                                <td><%= item.name %></td>
+                                <td>$<%= item.price %></td>
+                                <td><%= item.quantity %></td>
+                                <td>$<%= (item.price * item.quantity) %></td>
+                                <td>
+                                    <a href="/addtocart/<%= item._id %>/inc" class="btn">+</a>
+                                    <a href="/addtocart/<%= item._id %>/dec" class="btn">-</a>
+                                    <a href="/removefromcart/<%= item._id %>" class="btn btn-secondary">🗑 Remove</a>
+                                </td>
+                            </tr>
+                        <% }) %>
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <td colspan="3"><strong>Total:</strong></td>
+                        </tr>
+                    </tfoot>
+                </table>
+            <% } %>
+        </section>
+
+    </main>
+    <%- include('footer')  %>
+</body>
+</html>
