@@ -1,3 +1,7 @@
+// npm i express multer express-session 
+// cd testpad/regd
+// node server.js
+
 const express = require('express');
 const multer = require('multer');
 
